@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Restaurant Table Management</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #fff8f0;
+            color: #492c20;
+        }
+
+        header {
+            background: #492c20;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            width: 100%;
+            background: #8b4b35;
+            padding: 18px 10px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        nav a:hover {
+            color: #ffd9a0;
+        }
+
+        .banner {
+            height: 250px;
+            background:
+                linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)),
+                url("https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1400")
+                center/cover;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 30px;
+        }
+
+        .container {
+            width: 90%;
+            margin: 30px auto;
+        }
+
+        .form-box, .table-box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #0002;
+            margin-bottom: 30px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #c9a99b;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 11px 20px;
+            background: #8b4b35;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #492c20;
+        }
+
+        .delete {
+            background: #a33b32;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 13px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #492c20;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #fff0e5;
+        }
+
+        .table-image {
+            width: 75px;
+            height: 55px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        footer {
+            background: #492c20;
+            color: white;
+            text-align: center;
+            padding: 18px;
+            margin-top: 40px;
+        }
+
+        .table-box {
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Restaurant Reservation System</h1>
+        <p>Restaurant Table Management</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="customers.html">Customers</a>
+        <a href="tables.html">Tables</a>
+        <a href="reservations.html">Reservations</a>
+        <a href="staff.html">Staff</a>
+    </nav>
+
+    <div class="banner">
+        <h2>Our Restaurant Tables</h2>
+    </div>
+
+    <div class="container">
+
+        <div class="form-box">
+
+            <h2>Add Table Details</h2>
+
+            <form id="tableForm">
+
+                <input type="text" id="table_number"
+                    placeholder="Table Number (Example: T01)" required>
+
+                <input type="number" id="seating_capacity"
+                    placeholder="Seating Capacity" min="1" required>
+
+                <select id="location" required>
+                    <option value="">Select Location</option>
+                    <option value="Indoor">Indoor</option>
+                    <option value="Outdoor">Outdoor</option>
+                    <option value="VIP">VIP</option>
+                </select>
+
+                <select id="status" required>
+                    <option value="">Select Status</option>
+                    <option value="Available">Available</option>
+                    <option value="Booked">Booked</option>
+                </select>
+
+                <button type="submit" id="submitBtn">
+                    Add Table
+                </button>
+
+                <button type="button" onclick="resetForm()">
+                    Clear
+                </button>
+
+            </form>
+
+        </div>
+
+        <div class="table-box">
+
+            <h2>Restaurant Table Details</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Table ID</th>
+                        <th>Table Number</th>
+                        <th>Seating Capacity</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tableList"></tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <footer>
+        <p>© 2026 Restaurant Reservation System. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+
+        let editId = null;
+
+        async function loadTables() {
+
+            try {
+
+                const response = await fetch("/tables");
+                const tables = await response.json();
+
+                const list = document.getElementById("tableList");
+
+                list.innerHTML = "";
+
+                tables.forEach(table => {
+
+                    list.innerHTML += `
+                        <tr>
+                            <td>
+                                <img class="table-image"
+                                src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=200"
+                                alt="Restaurant Table">
+                            </td>
+
+                            <td>${table.table_id}</td>
+                            <td>${table.table_number}</td>
+                            <td>${table.seating_capacity}</td>
+                            <td>${table.location}</td>
+                            <td>${table.status}</td>
+
+                            <td>
+                                <button onclick="editTable(${table.table_id})">
+                                    Edit
+                                </button>
+
+                                <button class="delete"
+                                onclick="deleteTable(${table.table_id})">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+
+                });
+
+            } catch (error) {
+
+                alert("Unable to load tables. Check server.js.");
+                console.error(error);
+
+            }
+        }
+
+        document.getElementById("tableForm")
+        .addEventListener("submit", async function(e) {
+
+            e.preventDefault();
+
+            const table = {
+
+                table_number: document.getElementById("table_number").value,
+
+                seating_capacity: document.getElementById("seating_capacity").value,
+
+                location: document.getElementById("location").value,
+
+                status: document.getElementById("status").value
+
+            };
+
+            try {
+
+                let response;
+
+                if (editId === null) {
+
+                    response = await fetch("/tables", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(table)
+                    });
+
+                } else {
+
+                    response = await fetch("/tables/" + editId, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(table)
+                    });
+
+                }
+
+                if (!response.ok) {
+                    alert("Operation failed. Check the details.");
+                    return;
+                }
+
+                alert(editId === null
+                    ? "Table Added Successfully!"
+                    : "Table Updated Successfully!");
+
+                resetForm();
+                loadTables();
+
+            } catch (error) {
+
+                alert("Server connection error.");
+                console.error(error);
+
+            }
+
+        });
+
+        async function editTable(id) {
+
+            const response = await fetch("/tables");
+            const tables = await response.json();
+
+            const table = tables.find(t => t.table_id === id);
+
+            if (table) {
+
+                editId = id;
+
+                document.getElementById("table_number").value =
+                    table.table_number;
+
+                document.getElementById("seating_capacity").value =
+                    table.seating_capacity;
+
+                document.getElementById("location").value =
+                    table.location;
+
+                document.getElementById("status").value =
+                    table.status;
+
+                document.getElementById("submitBtn").innerText =
+                    "Update Table";
+
+                window.scrollTo(0, 0);
+
+            }
+        }
+
+        async function deleteTable(id) {
+
+            if (confirm("Are you sure you want to delete this table?")) {
+
+                const response = await fetch("/tables/" + id, {
+                    method: "DELETE"
+                });
+
+                if (response.ok) {
+
+                    alert("Table Deleted Successfully!");
+                    loadTables();
+
+                } else {
+
+                    alert("Unable to delete table.");
+
+                }
+            }
+        }
+
+        function resetForm() {
+
+            document.getElementById("tableForm").reset();
+
+            document.getElementById("submitBtn").innerText =
+                "Add Table";
+
+            editId = null;
+
+        }
+
+        loadTables();
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Reservation System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #fff8f0;
+            color: #492c20;
+        }
+
+        header {
+            background: #4a3028;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        header h1 {
+            margin-bottom: 10px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            width: 100%;
+            background: #8b4b35;
+            padding: 18px 10px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        nav a:hover {
+            color: #ffd9a0;
+        }
+
+        .hero {
+            height: 400px;
+            background-image:
+                linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)),
+                url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600");
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+        }
+
+        .hero h2 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 20px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+
+        .container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #8b4b35;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-7px);
+        }
+
+        .card img {
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+        }
+
+        .card h3 {
+            color: #8b4b35;
+            margin: 15px;
+        }
+
+        .card p {
+            padding: 0 15px 15px;
+            line-height: 1.5;
+        }
+
+        .card a {
+            display: inline-block;
+            background: #8b4b35;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .card a:hover {
+            background: #5c3023;
+        }
+
+        footer {
+            background: #4a3028;
+            color: white;
+            text-align: center;
+            padding: 18px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Restaurant Reservation System</h1>
+        <p>Delicious Food | Beautiful Moments | Easy Reservations</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="customers.html">Customers</a>
+        <a href="tables.html">Tables</a>
+        <a href="reservations.html">Reservations</a>
+        <a href="staff.html">Staff</a>
+    </nav>
+
+    <section class="hero">
+        <div>
+            <h2>Welcome to Our Restaurant</h2>
+            <p>Enjoy delicious food and make beautiful memories!</p>
+        </div>
+    </section>
+
+    <div class="container">
+
+        <h2>Explore Our Restaurant Management</h2>
+
+        <div class="cards">
+
+            <!-- Customers Card -->
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=500"
+                     alt="Customers">
+
+                <h3>Customers</h3>
+                <p>Manage customer details and information easily.</p>
+
+                <a href="customers.html">View Customers</a>
+            </div>
+
+            <!-- Tables Card -->
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500"
+                     alt="Restaurant Tables">
+
+                <h3>Restaurant Tables</h3>
+                <p>Manage restaurant tables, seating capacity and availability.</p>
+
+                <a href="tables.html">View Tables</a>
+            </div>
+
+            <!-- Reservations Card - Corrected Image -->
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=500"
+                     alt="Reservations">
+
+                <h3>Reservations</h3>
+                <p>Manage customer bookings and reservation details.</p>
+
+                <a href="reservations.html">View Reservations</a>
+            </div>
+
+            <!-- Staff Card -->
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=500"
+                     alt="Staff">
+
+                <h3>Staff</h3>
+                <p>Manage restaurant staff details, roles and shifts.</p>
+
+                <a href="staff.html">View Staff</a>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>Restaurant Reservation System | All Rights Reserved</p>
+    </footer>
+
+</body>
+</html>

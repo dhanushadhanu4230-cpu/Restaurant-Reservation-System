@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reservation Management</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #fff8f0;
+            color: #492c20;
+        }
+
+        header {
+            background: #492c20;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 25px;
+            width: 100%;
+            background: #8b4b35;
+            padding: 18px 10px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        nav a:hover {
+            color: #ffd9a0;
+        }
+
+        .banner {
+            height: 250px;
+            background:
+                linear-gradient(rgba(0,0,0,.4), rgba(0,0,0,.4)),
+                url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1400")
+                center/cover;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 30px;
+        }
+
+        .container {
+            width: 90%;
+            margin: 30px auto;
+        }
+
+        .form-box, .table-box {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #0002;
+            margin-bottom: 30px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #c9a99b;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 11px 20px;
+            background: #8b4b35;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #492c20;
+        }
+
+        .delete {
+            background: #a33b32;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 13px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #492c20;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #fff0e5;
+        }
+
+        .reservation-image {
+            width: 75px;
+            height: 55px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .table-box {
+            overflow-x: auto;
+        }
+
+        footer {
+            background: #492c20;
+            color: white;
+            text-align: center;
+            padding: 18px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Restaurant Reservation System</h1>
+        <p>Reservation Management</p>
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="customers.html">Customers</a>
+        <a href="tables.html">Tables</a>
+        <a href="reservations.html">Reservations</a>
+        <a href="staff.html">Staff</a>
+    </nav>
+
+    <div class="banner">
+        <h2>Book Your Table</h2>
+    </div>
+
+    <div class="container">
+
+        <div class="form-box">
+
+            <h2>Add Reservation Details</h2>
+
+            <form id="reservationForm">
+
+                <input type="number" id="customer_id"
+                    placeholder="Customer ID" min="1" required>
+
+                <input type="number" id="table_id"
+                    placeholder="Table ID" min="1" required>
+
+                <label>Reservation Date</label>
+                <input type="date" id="reservation_date" required>
+
+                <label>Reservation Time</label>
+                <input type="time" id="reservation_time" required>
+
+                <input type="number" id="guests"
+                    placeholder="Number of Guests" min="1" required>
+
+                <select id="status" required>
+                    <option value="">Select Status</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+
+                <button type="submit" id="submitBtn">
+                    Add Reservation
+                </button>
+
+                <button type="button" onclick="resetForm()">
+                    Clear
+                </button>
+
+            </form>
+
+        </div>
+
+        <div class="table-box">
+
+            <h2>Reservation Details</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Reservation ID</th>
+                        <th>Customer ID</th>
+                        <th>Table ID</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Guests</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="reservationList"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <footer>
+        <p>© 2026 Restaurant Reservation System. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+
+        let editId = null;
+
+        async function loadReservations() {
+
+            try {
+
+                const response = await fetch("/reservations");
+                const reservations = await response.json();
+
+                const list = document.getElementById("reservationList");
+
+                list.innerHTML = "";
+
+                reservations.forEach(reservation => {
+
+                    list.innerHTML += `
+                        <tr>
+
+                            <td>
+                                <img class="reservation-image"
+                                src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=200"
+                                alt="Restaurant">
+                            </td>
+
+                            <td>${reservation.reservation_id}</td>
+                            <td>${reservation.customer_id}</td>
+                            <td>${reservation.table_id}</td>
+                            <td>${String(reservation.reservation_date).substring(0, 10)}</td>
+                            <td>${reservation.reservation_time}</td>
+                            <td>${reservation.guests}</td>
+                            <td>${reservation.status}</td>
+
+                            <td>
+                                <button onclick="editReservation(${reservation.reservation_id})">
+                                    Edit
+                                </button>
+
+                                <button class="delete"
+                                onclick="deleteReservation(${reservation.reservation_id})">
+                                    Delete
+                                </button>
+                            </td>
+
+                        </tr>
+                    `;
+
+                });
+
+            } catch (error) {
+
+                alert("Unable to load reservations. Check server.js.");
+                console.error(error);
+
+            }
+        }
+
+        document.getElementById("reservationForm")
+        .addEventListener("submit", async function(e) {
+
+            e.preventDefault();
+
+            const reservation = {
+
+                customer_id: document.getElementById("customer_id").value,
+
+                table_id: document.getElementById("table_id").value,
+
+                reservation_date: document.getElementById("reservation_date").value,
+
+                reservation_time: document.getElementById("reservation_time").value,
+
+                guests: document.getElementById("guests").value,
+
+                status: document.getElementById("status").value
+
+            };
+
+            try {
+
+                let response;
+
+                if (editId === null) {
+
+                    response = await fetch("/reservations", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(reservation)
+                    });
+
+                } else {
+
+                    response = await fetch("/reservations/" + editId, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(reservation)
+                    });
+
+                }
+
+                if (!response.ok) {
+                    alert("Operation failed. Check customer ID, table ID and other details.");
+                    return;
+                }
+
+                alert(editId === null
+                    ? "Reservation Added Successfully!"
+                    : "Reservation Updated Successfully!");
+
+                resetForm();
+                loadReservations();
+
+            } catch (error) {
+
+                alert("Server connection error.");
+                console.error(error);
+
+            }
+
+        });
+
+        async function editReservation(id) {
+
+            const response = await fetch("/reservations");
+            const reservations = await response.json();
+
+            const reservation = reservations.find(
+                r => r.reservation_id === id
+            );
+
+            if (reservation) {
+
+                editId = id;
+
+                document.getElementById("customer_id").value =
+                    reservation.customer_id;
+
+                document.getElementById("table_id").value =
+                    reservation.table_id;
+
+                document.getElementById("reservation_date").value =
+                    String(reservation.reservation_date).substring(0, 10);
+
+                document.getElementById("reservation_time").value =
+                    String(reservation.reservation_time).substring(0, 5);
+
+                document.getElementById("guests").value =
+                    reservation.guests;
+
+                document.getElementById("status").value =
+                    reservation.status;
+
+                document.getElementById("submitBtn").innerText =
+                    "Update Reservation";
+
+                window.scrollTo(0, 0);
+
+            }
+        }
+
+        async function deleteReservation(id) {
+
+            if (confirm("Are you sure you want to delete this reservation?")) {
+
+                const response = await fetch("/reservations/" + id, {
+                    method: "DELETE"
+                });
+
+                if (response.ok) {
+
+                    alert("Reservation Deleted Successfully!");
+                    loadReservations();
+
+                } else {
+
+                    alert("Unable to delete reservation.");
+
+                }
+            }
+        }
+
+        function resetForm() {
+
+            document.getElementById("reservationForm").reset();
+
+            document.getElementById("submitBtn").innerText =
+                "Add Reservation";
+
+            editId = null;
+
+        }
+
+        loadReservations();
+
+    </script>
+
+</body>
+</html>
